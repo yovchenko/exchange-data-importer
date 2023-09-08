@@ -24,7 +24,7 @@ export function startServer(client: Client) {
             e.date,
             r.in_rate,
             r.out_rate,
-            eo.country_code, -- Corrected column reference
+            eo.country_code,
             (
               CASE
                 WHEN e.from_currency = 'USD' THEN e.ask * r.in_rate
@@ -79,7 +79,6 @@ export function startServer(client: Client) {
     }
   });
 
-  // Start the server
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
