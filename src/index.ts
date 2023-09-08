@@ -7,6 +7,7 @@ import schema from "./schema.json";
 import { importCountries } from "./import/import-countries";
 import { importData } from "./import/import-exchanges";
 import { dbConfig } from "./db-config";
+import { startServer } from "./server"; // Import the startServer function
 
 const alwaysArray = [
   "exchange-offices.exchange-office.rates.rate",
@@ -42,10 +43,11 @@ if (valid !== true) {
       await importCountries(jsObj, client);
       await importData(jsObj, client);
       console.log("Data imported successfully!");
+
+      // Now that data import is complete, start the server
+      startServer(client); // Pass the client instance to the server
     } catch (error) {
       console.error("Import process failed:", error);
-    } finally {
-      await client.end();
     }
   }
 
