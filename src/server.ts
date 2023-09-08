@@ -15,7 +15,7 @@ export function startServer(client: Client) {
 
       // SQL query to calculate profits and retrieve top 3 exchangers per country
       const query = `
-        WITH ranked_exchangers AS (
+        WITH exchange_transactions AS (
           SELECT
             e.exchange_office_id,
             e.from_currency,
@@ -25,44 +25,44 @@ export function startServer(client: Client) {
             r.in_rate,
             r.out_rate,
             eo.country_code,
-            (
-              CASE
-                WHEN e.from_currency = 'USD' THEN e.ask * r.in_rate
-                ELSE e.ask / r.out_rate
-              END
-            ) AS profit
+            CASE
+              WHEN e.from_currency = 'USD' THEN e.ask * r.in_rate
+              ELSE e.ask / r.out_rate
+            END AS profit
           FROM exchange AS e
           JOIN rate AS r ON e.from_currency = r.from_currency AND e.to_currency = r.to_currency
           JOIN exchange_office AS eo ON e.exchange_office_id = eo.id
           WHERE e.date >= $1
         ),
-        ranked_by_country AS (
+        country_total_profit AS (
           SELECT
             country_code,
-            exchange_office_id,
-            from_currency,
-            to_currency,
-            ask,
-            date,
-            in_rate,
-            out_rate,
-            profit,
-            RANK() OVER (PARTITION BY country_code ORDER BY profit DESC) AS country_rank
-          FROM ranked_exchangers
+            SUM(profit) AS total_profit
+          FROM exchange_transactions
+          GROUP BY country_code
+          ORDER BY total_profit DESC
+          LIMIT 3
+        ),
+        ranked_by_country AS (
+          SELECT
+            et.*,
+            ROW_NUMBER() OVER (PARTITION BY et.country_code ORDER BY et.profit DESC) AS country_rank
+          FROM exchange_transactions AS et
+          WHERE et.country_code IN (SELECT country_code FROM country_total_profit)
         )
         SELECT
-          country_code,
-          exchange_office_id,
-          from_currency,
-          to_currency,
-          ask,
-          date,
-          in_rate,
-          out_rate,
-          profit
-        FROM ranked_by_country
-        WHERE country_rank <= 3
-        ORDER BY country_code, country_rank;      
+          et.country_code,
+          et.exchange_office_id,
+          et.from_currency,
+          et.to_currency,
+          et.ask,
+          et.date,
+          et.in_rate,
+          et.out_rate,
+          et.profit
+        FROM ranked_by_country AS et
+        WHERE et.country_rank <= 3
+        ORDER BY et.country_code, et.country_rank;   
       `;
 
       // Execute the SQL query using the provided client
