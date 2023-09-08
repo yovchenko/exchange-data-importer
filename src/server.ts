@@ -9,12 +9,9 @@ app.use(express.json());
 export function startServer(client: Client) {
   app.get("/top-exchangers", async (req: Request, res: Response) => {
     try {
-      // Note: No need to create a new client instance here, use the one passed as a parameter
-
       // Calculate the last month's start date
       const lastMonthStartDate = new Date();
       lastMonthStartDate.setMonth(lastMonthStartDate.getMonth() - 1);
-      console.log("Last Month's Start Date:", lastMonthStartDate);
 
       // SQL query to calculate profits and retrieve top 3 exchangers per country
       const query = `
@@ -67,7 +64,6 @@ export function startServer(client: Client) {
         WHERE country_rank <= 3
         ORDER BY country_code, country_rank;      
       `;
-      console.log("SQL Query:", query);
 
       // Execute the SQL query using the provided client
       const result = await client.query(query, [lastMonthStartDate]);
