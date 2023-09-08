@@ -1,0 +1,17 @@
+{
+  "name": "exchange-data-importer",
+  "version": "1.0.0",
+  "description": "A NodeJS application for parsing and processing currency exchange data from a text file into a PostgreSQL database. It also provides an API for retrieving the top 3 currency exchangers by profit in the last month for the most profitable countries.",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}

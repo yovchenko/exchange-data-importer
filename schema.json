@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "exchange-offices": {
+      "type": "object",
+      "properties": {
+        "exchange-office": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" },
+              "country": { "type": "string" },
+              "exchanges": {
+                "type": "object",
+                "properties": {
+                  "exchange": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "from": { "type": "string" },
+                        "to": { "type": "string" },
+                        "ask": { "type": "number" },
+                        "date": { "type": "string" }
+                      },
+                      "required": ["from", "to", "ask", "date"]
+                    }
+                  }
+                },
+                "required": ["exchange"]
+              },
+              "rates": {
+                "type": "object",
+                "properties": {
+                  "rate": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "from": { "type": "string" },
+                        "to": { "type": "string" },
+                        "in": { "type": "number" },
+                        "out": { "type": "number" },
+                        "reserve": { "type": "integer" },
+                        "date": { "type": "string" }
+                      },
+                      "required": ["from", "to", "in", "out", "reserve", "date"]
+                    }
+                  }
+                },
+                "required": ["rate"]
+              }
+            },
+            "required": ["id", "name", "country", "rates"]
+          }
+        }
+      },
+      "required": ["exchange-office"]
+    },
+    "countries": {
+      "type": "object",
+      "properties": {
+        "country": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "#text": { "type": "string" }
+                },
+                "required": ["name", "#text"]
+              }
+            },
+            "required": ["code"]
+          }
+        }
+      },
+      "required": ["country"]
+    }
+  },
+  "required": ["exchange-offices", "countries"]
+}
