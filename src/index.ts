@@ -23,7 +23,7 @@ const options = {
 
 // Read and clean the sample XML data from a file
 const data = fs.readFileSync("sample-data.txt", "utf8");
-const cleanedData = data.replace(/=/g, "");
+const cleanedData = data.replace(/=\s+/g, "");
 const pugOutput = pug.render(cleanedData, { doctype: "xml" });
 
 // Parse the XML data into a JavaScript object
